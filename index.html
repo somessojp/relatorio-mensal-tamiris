@@ -197,17 +197,32 @@ async function carregarDados(){
 
 function preencherConsultores(){
   const isAdm = String(usuarioLogado.perfil||'').toUpperCase() === 'ADM';
+
+  const listaConsultores = consultores.length ? consultores : [
+    'Tassio Borges',
+    'Tamiris Firmino',
+    'Tamila Pereira'
+  ];
+
   const valorFiltro = filtroConsultor.value;
+  const valorCadastro = consultor.value;
+
   filtroConsultor.innerHTML = '<option value="">Todos</option>';
-  consultor.innerHTML = '';
-  consultores.forEach(c=>{
+  consultor.innerHTML = '<option value="">Selecione</option>';
+
+  listaConsultores.forEach(c=>{
     filtroConsultor.innerHTML += `<option value="${c}">${c}</option>`;
     consultor.innerHTML += `<option value="${c}">${c}</option>`;
   });
+
   filtroConsultor.value = valorFiltro;
-  if(!isAdm){
+
+  if(isAdm){
+    consultor.value = valorCadastro;
+  } else {
     const c = usuarioLogado.consultorVinculado || usuarioLogado.nome;
     consultor.innerHTML = `<option value="${c}">${c}</option>`;
+    consultor.value = c;
   }
 }
 
