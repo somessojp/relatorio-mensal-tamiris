@@ -262,17 +262,17 @@ function renderTabela(){
 
 async function salvarLancamento(){
   const itemObj = {
-    ID: idRegistro.value,
-    Consultor: consultor.value,
-    Empresa: empresa.value.trim(),
-    'Nome Pagador': nomePagador.value.trim(),
-    'Nota Fiscal': notaFiscal.value.trim(),
-    Valor: numero(valor.value),
-    'Data Pagamento': dataPagamento.value,
-'Data Cadastro': dataCadastro.value,
-    Parcela: parcela.value.trim(),
-    Item: item.value.trim()
-  };
+  ID: idRegistro.value,
+  Consultor: consultor.value,
+  Empresa: empresa.value.trim(),
+  'Nome Pagador': nomePagador.value.trim(),
+  'Nota Fiscal': notaFiscal.value.trim(),
+  Valor: numero(valor.value),
+  'Data Pagamento': dataPagamento.value,
+  'Data Cadastro': dataCadastro.value,
+  Parcela: parcela.value.trim(),
+  Item: item.value.trim()
+};
   if(!itemObj.Empresa || !itemObj['Nome Pagador'] || !itemObj.Valor || !itemObj['Data Pagamento'] || !itemObj['Data Cadastro']){
   alert('Preencha Empresa, Nome Pagador, Valor, Data Pagamento e Data Cadastro.');
     return;
