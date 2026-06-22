@@ -101,7 +101,8 @@ tr:nth-child(even){background:#fafafa}
       <div><label>Nome Pagador</label><input id="nomePagador"></div>
       <div><label>Nota Fiscal</label><input id="notaFiscal"></div>
       <div><label>Valor</label><input id="valor" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarMoedaCampo(this)"></div>
-      <div><label>Data</label><input id="data" type="date"></div>
+      <div><label>Data Pagamento</label><input id="dataPagamento" type="date"></div>
+<div><label>Data Cadastro</label><input id="dataCadastro" type="date"></div>
       <div><label>Parcela</label><input id="parcela" placeholder="Ex: 1/3"></div>
       <div><label>Item</label><input id="item"></div>
       <div><label>&nbsp;</label><button onclick="salvarLancamento()">Salvar</button></div>
@@ -114,7 +115,7 @@ tr:nth-child(even){background:#fafafa}
     <thead>
       <tr>
         <th>Consultor</th><th>Empresa</th><th>Nome Pagador</th><th>Nota Fiscal</th>
-        <th>Valor</th><th>Data</th><th>Parcela</th><th>Item</th><th class="no-print">Ações</th>
+<th>Valor</th><th>Data Pagamento</th><th>Data Cadastro</th><th>Parcela</th><th>Item</th><th class="no-print">Ações</th>
       </tr>
     </thead>
     <tbody id="tabela"></tbody>
@@ -243,7 +244,8 @@ function renderTabela(){
         <td>${l['Nome Pagador']||''}</td>
         <td>${l['Nota Fiscal']||''}</td>
         <td>${moeda(numero(l.Valor))}</td>
-        <td>${l.Data||''}</td>
+        <td>${l['Data Pagamento']||''}</td>
+<td>${l['Data Cadastro']||''}</td>
         <td>${l.Parcela||''}</td>
         <td>${l.Item||''}</td>
         <td class="no-print"><div class="acoes">
@@ -266,12 +268,13 @@ async function salvarLancamento(){
     'Nome Pagador': nomePagador.value.trim(),
     'Nota Fiscal': notaFiscal.value.trim(),
     Valor: numero(valor.value),
-    Data: data.value,
+    'Data Pagamento': dataPagamento.value,
+'Data Cadastro': dataCadastro.value,
     Parcela: parcela.value.trim(),
     Item: item.value.trim()
   };
-  if(!itemObj.Empresa || !itemObj['Nome Pagador'] || !itemObj.Valor || !itemObj.Data){
-    alert('Preencha Empresa, Nome Pagador, Valor e Data.');
+  if(!itemObj.Empresa || !itemObj['Nome Pagador'] || !itemObj.Valor || !itemObj['Data Pagamento'] || !itemObj['Data Cadastro']){
+  alert('Preencha Empresa, Nome Pagador, Valor, Data Pagamento e Data Cadastro.');
     return;
   }
   const r = await api('salvar',{usuario:usuarioLogado,item:itemObj});
@@ -287,7 +290,8 @@ function editar(l){
   nomePagador.value = l['Nome Pagador'] || '';
   notaFiscal.value = l['Nota Fiscal'] || '';
   valor.value = moeda(numero(l.Valor));
-  data.value = l.Data || '';
+  dataPagamento.value = l['Data Pagamento'] || '';
+dataCadastro.value = l['Data Cadastro'] || '';
   parcela.value = l.Parcela || '';
   item.value = l.Item || '';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -306,7 +310,8 @@ function limparFormulario(){
   nomePagador.value = '';
   notaFiscal.value = '';
   valor.value = '';
-  data.value = '';
+  dataPagamento.value = '';
+dataCadastro.value = '';
   parcela.value = '';
   item.value = '';
   if(consultor.options.length) consultor.selectedIndex = 0;
@@ -318,7 +323,7 @@ function exportarExcel(){
   const termo = (pesquisa.value || '').toLowerCase();
   const filtrado = lancamentos.filter(l => Object.values(l).join(' ').toLowerCase().includes(termo));
   filtrado.forEach(l=>{
-    linhas.push([l.Consultor||'',l.Empresa||'',l['Nome Pagador']||'',l['Nota Fiscal']||'',numero(l.Valor),l.Data||'',l.Parcela||'',l.Item||'']);
+    linhas.push([l.Consultor||'',l.Empresa||'',l['Nome Pagador']||'',l['Nota Fiscal']||'',numero(l.Valor),l['Data Pagamento']||'',l.Parcela||'',l.Item||'']);
   });
   const total = filtrado.reduce((s,l)=>s+numero(l.Valor),0);
   linhas.push([]);
