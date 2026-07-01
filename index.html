@@ -246,7 +246,7 @@ function renderTabela(){
         <td>${moeda(numero(l.Valor))}</td>
         <td>${l['Data Pagamento']||''}</td>
 <td>${l['Data Cadastro']||''}</td>
-        <td>${l.Parcela||''}</td>
+        <td>${formatarParcela(l.Parcela)}</td>
         <td>${l.Item||''}</td>
         <td class="no-print"><div class="acoes">
           <button class="btn-edit" onclick='editar(${JSON.stringify(l)})'>Editar</button>
@@ -270,7 +270,7 @@ async function salvarLancamento(){
   Valor: numero(valor.value),
   'Data Pagamento': dataPagamento.value,
   'Data Cadastro': dataCadastro.value,
-  Parcela: parcela.value.trim(),
+  Parcela: parcela.value.trim() ? "'" + parcela.value.trim() : '',
   Item: item.value.trim()
 };
   if(!itemObj.Empresa || !itemObj['Nome Pagador'] || !itemObj.Valor || !itemObj['Data Pagamento'] || !itemObj['Data Cadastro']){
@@ -292,7 +292,7 @@ function editar(l){
   valor.value = moeda(numero(l.Valor));
   dataPagamento.value = l['Data Pagamento'] || '';
 dataCadastro.value = l['Data Cadastro'] || '';
-  parcela.value = l.Parcela || '';
+  parcela.value = formatarParcela(l.Parcela);
   item.value = l.Item || '';
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -323,7 +323,7 @@ function exportarExcel(){
   const termo = (pesquisa.value || '').toLowerCase();
   const filtrado = lancamentos.filter(l => Object.values(l).join(' ').toLowerCase().includes(termo));
   filtrado.forEach(l=>{
-    linhas.push([l.Consultor||'',l.Empresa||'',l['Nome Pagador']||'',l['Nota Fiscal']||'',numero(l.Valor),l['Data Pagamento']||'',l.Parcela||'',l.Item||'']);
+    linhas.push([l.Consultor||'',l.Empresa||'',l['Nome Pagador']||'',l['Nota Fiscal']||'',numero(l.Valor),l['Data Pagamento']||'',formatarParcela(l.Parcela),l.Item||'']);
   });
   const total = filtrado.reduce((s,l)=>s+numero(l.Valor),0);
   linhas.push([]);
