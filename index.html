@@ -102,7 +102,7 @@ tr:nth-child(even){background:#fafafa}
       <div><label>Nota Fiscal</label><input id="notaFiscal"></div>
       <div><label>Valor</label><input id="valor" inputmode="decimal" placeholder="R$ 0,00" onblur="formatarMoedaCampo(this)"></div>
       <div><label>Data Pagamento</label><input id="dataPagamento" type="date"></div>
-<div><label>Data Cadastro</label><input id="dataCadastro" type="date"></div>
+<div><label>Mês da competência</label><input id="dataCadastro" type="month"></div>
       <div><label>Parcela</label><input id="parcela" placeholder="Ex: 1/3"></div>
       <div><label>Item</label><input id="item"></div>
       <div><label>&nbsp;</label><button onclick="salvarLancamento()">Salvar</button></div>
@@ -115,7 +115,7 @@ tr:nth-child(even){background:#fafafa}
     <thead>
       <tr>
         <th>Consultor</th><th>Empresa</th><th>Nome Pagador</th><th>Nota Fiscal</th>
-<th>Valor</th><th>Data Pagamento</th><th>Data Cadastro</th><th>Parcela</th><th>Item</th><th class="no-print">Ações</th>
+<th>Valor</th><th>Data Pagamento</th><th>Mês da Competência</th><th>Parcela</th><th>Item</th><th class="no-print">Ações</th>
       </tr>
     </thead>
     <tbody id="tabela"></tbody>
@@ -227,6 +227,22 @@ function preencherConsultores(){
 }
 
 
+
+function formatarCompetencia(v){
+  if(!v) return '';
+  const s = String(v).trim();
+
+  if(/^\d{4}-\d{2}$/.test(s)){
+    return s.slice(5,7) + '/' + s.slice(0,4);
+  }
+
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)){
+    return s.slice(5,7) + '/' + s.slice(0,4);
+  }
+
+  return s;
+}
+
 function formatarParcela(v){
   if(v === null || v === undefined || v === '') return '';
 
@@ -261,7 +277,7 @@ function renderTabela(){
         <td>${l['Nota Fiscal']||''}</td>
         <td>${moeda(numero(l.Valor))}</td>
         <td>${l['Data Pagamento']||''}</td>
-<td>${l['Data Cadastro']||''}</td>
+<td>${formatarCompetencia(l['Data Cadastro'])}</td>
         <td>${formatarParcela(l.Parcela)}</td>
         <td>${l.Item||''}</td>
         <td class="no-print"><div class="acoes">
@@ -290,7 +306,7 @@ async function salvarLancamento(){
   Item: item.value.trim()
 };
   if(!itemObj.Empresa || !itemObj['Nome Pagador'] || !itemObj.Valor || !itemObj['Data Pagamento'] || !itemObj['Data Cadastro']){
-  alert('Preencha Empresa, Nome Pagador, Valor, Data Pagamento e Data Cadastro.');
+  alert('Preencha Empresa, Nome Pagador, Valor, Data Pagamento e Mês da Competência.');
     return;
   }
   const r = await api('salvar',{usuario:usuarioLogado,item:itemObj});
@@ -307,7 +323,7 @@ function editar(l){
   notaFiscal.value = l['Nota Fiscal'] || '';
   valor.value = moeda(numero(l.Valor));
   dataPagamento.value = l['Data Pagamento'] || '';
-dataCadastro.value = l['Data Cadastro'] || '';
+dataCadastro.value = String(l['Data Cadastro'] || '').slice(0,7);
   parcela.value = formatarParcela(l.Parcela);
   item.value = l.Item || '';
   window.scrollTo({top:0,behavior:'smooth'});
